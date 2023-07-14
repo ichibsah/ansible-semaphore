@@ -46,4 +46,4 @@
     win_chocolatey:
       name: notepadplusplus
       version: ‘7.8’
-    log_path: "{{logpath}}\\job-1101-{{filename}}"
+      #log_path: "{{logpath}}\\job-1101-{{filename}}"
