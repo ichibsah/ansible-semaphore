@@ -63,6 +63,7 @@
     win_chocolatey:
       name: adobereader
       state: latest
+      source: https://community.chocolatey.org/api/v2/      
       #log_path: "{{logpath}}\\job-1101-{{filename}}"
 
   # - name: Job-id 1101 |Install Notepad++ latest version
