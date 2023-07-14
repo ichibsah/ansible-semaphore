@@ -1,1 +1,1 @@
-ansible-playbook -i hosts.ini win_update.yml -vvv
+ansible-playbook -i hosts.ini win_update.yml -v
