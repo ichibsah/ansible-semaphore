@@ -16,8 +16,8 @@
   
 
   vars:
-    ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
-    ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
+    #+ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
+    #+ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
     #ansible_shell_type: powershell #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
     ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
     #shell_type: powershell #ERROR! 'shell_type' is not a valid attribute for a Play
