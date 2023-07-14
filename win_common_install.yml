@@ -53,6 +53,12 @@
       state: present
       value: C:\Temp
 
+  - name: Ensure Chocolatey installed from internal repo
+    win_chocolatey:
+      name: chocolatey
+      state: present
+      source: https://community.chocolatey.org/api/v2/ChocolateyInstall.ps1
+
   - name: Job-id 1101 |Install adobereader latest version
     win_chocolatey:
       name: adobereader
