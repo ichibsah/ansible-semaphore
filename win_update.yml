@@ -27,6 +27,11 @@
     #ansible_ssh_password: adminqit
     #ansible_become_pass: '{{ jenkins_become_pass }}'
     #ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      # ansible_user: ansible
+      # ansible_password: "{{ password }}"
+      # ansible_connection: winrm
+      # ansible_winrm_transport: ntlm
+      # ansible_winrm_server_cert_validation: ignore
     logpath: C:\ansible-log
     filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
 
