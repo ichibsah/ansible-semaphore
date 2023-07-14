@@ -3,3 +3,5 @@ collections:
 #- name: ansible.windows
 #- name: community.windows
 #- name: ansible.utils
+
+#https://www.liquidweb.com/kb/how-to-install-chocolatey-on-windows/
