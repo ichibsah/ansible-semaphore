@@ -42,7 +42,7 @@
       path: "{{logpath}}"
       state: directory
 
-  - name: Job-id 1101 |Install Notepad++ version 7.8
+  - name: Job-id 1101 |Install Notepad++ latest version
     win_chocolatey:
       name: notepadplusplus
       state: latest

@@ -1,0 +1,6 @@
+collections:
+- name: chocolatey.chocolatey
+- name: ansible.windows
+- name: ansible.windows.win_shell
+- name: community.windows
+- name: ansible.utils
