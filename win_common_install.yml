@@ -41,7 +41,7 @@
     ansible.windows.win_file:
       path: "{{logpath}}"
       state: directory
-
+      
   - name: Enable Community Repo
     win_chocolatey_source:
       name: chocolatey
