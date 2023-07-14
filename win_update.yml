@@ -1,7 +1,7 @@
 ---
 
 - name: 'QIT Automation 1.0'
-  hosts: pcs
+  ####hosts: pcs
   #connection: local
   #remote_user: adminqit
   #remote_user: adminqit
