@@ -30,7 +30,6 @@
       # ansible_user: ansible
       # ansible_password: "{{ password }}"
       # ansible_connection: winrm
-    #ansible_connection: chocolatey.chocolatey 
       # ansible_winrm_transport: ntlm
       # ansible_winrm_server_cert_validation: ignore
     logpath: C:\ansible-log
@@ -43,8 +42,25 @@
       path: "{{logpath}}"
       state: directory
 
-  - name: Job-id 1101 |Install Notepad++ latest version
+  - name: Enable Community Repo
+    win_chocolatey_source:
+      name: chocolatey
+      state: present
+
+  - name: Set the cache location
+    win_chocolatey_config:
+      name: cacheLocation
+      state: present
+      value: C:\Temp
+
+  - name: Job-id 1101 |Install adobereader latest version
     win_chocolatey:
-      name: notepadplusplus
+      name: adobereader
       state: latest
       #log_path: "{{logpath}}\\job-1101-{{filename}}"
+
+  # - name: Job-id 1101 |Install Notepad++ latest version
+  #   win_chocolatey:
+  #     name: notepadplusplus
+  #     state: latest
+  #     #log_path: "{{logpath}}\\job-1101-{{filename}}"
