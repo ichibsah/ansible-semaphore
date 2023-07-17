@@ -63,6 +63,13 @@
     win_chocolatey:
       name: adobereader
       state: latest
+
+   - name: Job-id 1102 |Install microsoft-teams latest version
+    win_chocolatey:
+      name: microsoft-teams.install
+      state: latest
+
+      
       #source: https://community.chocolatey.org/api/v2/      
       #log_path: "{{logpath}}\\job-1101-{{filename}}"
 
