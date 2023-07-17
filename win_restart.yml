@@ -38,7 +38,12 @@
 
 
   tasks: 
+  - name: Job-id 1000 | Create Ansible logs directory structure
+    ansible.windows.win_file:
+      path: "{{logpath}}"
+      state: directory
+
   - name: Job 99999 | Reboot machine
     ansible.windows.win_reboot:
-    reboot_timeout: 3600
-    log_path: "{{logpath}}\\job-99999-{{filename}}"
+      reboot_timeout: 3600
+      log_path: "{{logpath}}\\job-99999-{{filename}}"
