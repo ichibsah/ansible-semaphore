@@ -64,7 +64,7 @@
       name: adobereader
       state: latest
 
-   - name: Job-id 1102 |Install microsoft-teams latest version
+  - name: Job-id 1102 |Install microsoft-teams latest version
     win_chocolatey:
       name: microsoft-teams.install
       state: latest
