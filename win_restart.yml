@@ -46,4 +46,4 @@
   - name: Job 99999 | Reboot machine
     ansible.windows.win_reboot:
       reboot_timeout: 3600
-      log_path: "{{logpath}}\\job-99999-{{filename}}"
+      #log_path: "{{logpath}}\\job-99999-{{filename}}"
