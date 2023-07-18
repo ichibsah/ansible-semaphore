@@ -12,3 +12,19 @@
 
 - name: Create logrotate entry for ansible-pull.log
   template: src=templates/etc_logrotate.d_ansible-pull.j2 dest=/etc/logrotate.d/ansible-pull owner=root group=root mode=0644
+
+- name: Crontab | cronjob ansible.sh
+  cron:
+    name: "Create crontab entry to clone/pull git repository"
+    user: '{{ cron_user }}'
+    job: "ansible-pull -d {{ workdir }} -U {{ repo_url }} >>{{ logfile }} 2>&1"
+    #job: "/root/ansible.sh > /dev/null 2>&1"
+    state: present
+    backup: False 
+    minute: "*/2" # Minute when the job should run ( 0-59, *, */2, etc )
+    hour: "*" # Hour when the job should run ( 0-23, *, */2, etc )
+    day: "*" # Day of the month the job should run ( 1-31, *, */2, etc )
+    month: "*" # Month of the year the job should run ( 1-12, *, */2, etc )
+    weekday: "*" # Day of the week that the job should run ( 0-6 for Sunday-Saturday, *, etc )
+    disabled: False # If the job should be disabled (commented out) in the crontab. Only has effect if C(state=present).
+  #when: crntb_activate_cronjobs
