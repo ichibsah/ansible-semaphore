@@ -1,19 +1,9 @@
 ---
-
-- name: 'Ansible Pull'
-  hosts: localhost
-  connection: local
-  #remote_user: root
-  become_user: root
-  become: True
-  
+# defaults file for ansbl_pull
   vars:
 
-    # Become Pass
-    ansible_become_pass: '{{ dev2771_become_pass }}'
-
     # schedule is fed directly to cron
-    schedule: '*/1 * * * *'
+    schedule: '*/15 * * * *'
 
     # User to run ansible-pull as from cron
     cron_user: root
@@ -24,8 +14,7 @@
     # Directory to where repository will be cloned
     workdir: /var/lib/ansible/local
 
+    # Repository to check out -- YOU MUST CHANGE THIS
+    # repo must contain a local.yml file at top level
     #repo_url: git://github.com/sfromm/ansible-playbooks.git
-    repo_url: https://github.com/ichibsah/ansible-semaphore.git
-
-  roles:
-    - ansbl_pull
+    repo_url: git://github.com/ichibsah/ansible-semaphore.git
