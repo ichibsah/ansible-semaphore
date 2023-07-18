@@ -59,15 +59,25 @@
       state: present
       #source: https://community.chocolatey.org/api/v2/ChocolateyInstall.ps1
 
-  - name: Job-id 1101 |Install adobereader latest version
+  - name: Job-id 1101 | Install adobereader latest version
     win_chocolatey:
       name: adobereader
       state: latest
 
-  - name: Job-id 1102 |Install microsoft-teams latest version
+  - name: Job-id 1102 | Install microsoft-teams latest version
     win_chocolatey:
       name: microsoft-teams.install
       state: latest
+
+  - name: Job-id 1103 | Install teamviewer.host latest version
+    win_chocolatey:
+      name: teamviewer.host
+      state: latest
+
+  - name: Job-id 1104 | Install Winlogbeat
+    win_chocolatey:
+      name: winlogbeat
+      state: present
 
       
       #source: https://community.chocolatey.org/api/v2/      

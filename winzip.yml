@@ -151,3 +151,149 @@
     arguments: '/q /norestart'
     state: present
     expected_return_code: [0, 666, 3010]
+
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_package_module.html
+
+- name: Install the Visual C thingy
+  ansible.windows.win_package:
+    path: http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe
+    product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+    arguments: /install /passive /norestart
+
+- name: Install Visual C thingy with list of arguments instead of a string
+  ansible.windows.win_package:
+    path: http://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe
+    product_id: '{CF2BEA3C-26EA-32F8-AA9B-331F7E34BA97}'
+    arguments:
+    - /install
+    - /passive
+    - /norestart
+
+- name: Install MSBuild thingy with arguments split to prevent quotes
+  ansible.windows.win_package:
+    path: https://download.visualstudio.microsoft.com/download/pr/9665567e-f580-4acd-85f2-bc94a1db745f/vs_BuildTools.exe
+    product_id: '{D1437F51-786A-4F57-A99C-F8E94FBA1BD8}'
+    arguments:
+    - --norestart
+    - --passive
+    - --wait
+    - --add
+    - Microsoft.Net.Component.4.6.1.TargetingPack
+    - --add
+    - Microsoft.Net.Component.4.6.TargetingPack
+
+- name: Install Remote Desktop Connection Manager from msi with a permanent log
+  ansible.windows.win_package:
+    path: https://download.microsoft.com/download/A/F/0/AF0071F3-B198-4A35-AA90-C68D103BDCCF/rdcman.msi
+    product_id: '{0240359E-6A4C-4884-9E94-B397A02D893C}'
+    state: present
+    log_path: D:\logs\vcredist_x64-exe-{{lookup('pipe', 'date +%Y%m%dT%H%M%S')}}.log
+
+- name: Install Application from msi with multiple properties for installer
+  ansible.windows.win_package:
+    path: C:\temp\Application.msi
+    state: present
+    arguments: >-
+      SERVICE=1
+      DBNAME=ApplicationDB
+      DBSERVER=.\SQLEXPRESS
+      INSTALLDIR="C:\Program Files (x86)\App lication\App Server"
+
+- name: Install Microsoft® SQL Server® 2019 Express (DPAPI example)
+  ansible.windows.win_package:
+    path: C:\temp\SQLEXPR_x64_ENU\SETUP.EXE
+    product_id: Microsoft SQL Server SQL2019
+    arguments:
+      - SAPWD=VeryHardPassword
+      - /ConfigurationFile=C:\temp\configuration.ini
+  become: true
+  vars:
+    ansible_become_method: runas
+    ansible_become_user: "{{ user }}"
+    ansible_become_pass: "{{ password }}"
+
+- name: Uninstall Remote Desktop Connection Manager
+  ansible.windows.win_package:
+    product_id: '{0240359E-6A4C-4884-9E94-B397A02D893C}'
+    state: absent
+
+- name: Install Remote Desktop Connection Manager locally omitting the product_id
+  ansible.windows.win_package:
+    path: C:\temp\rdcman.msi
+    state: present
+
+- name: Uninstall Remote Desktop Connection Manager from local MSI omitting the product_id
+  ansible.windows.win_package:
+    path: C:\temp\rdcman.msi
+    state: absent
+
+# 7-Zip exe doesn't use a guid for the Product ID
+- name: Install 7zip from a network share with specific credentials
+  ansible.windows.win_package:
+    path: \\domain\programs\7z.exe
+    product_id: 7-Zip
+    arguments: /S
+    state: present
+  become: true
+  become_method: runas
+  become_flags: logon_type=new_credential logon_flags=netcredentials_only
+  vars:
+    ansible_become_user: DOMAIN\User
+    ansible_become_password: Password
+
+- name: Install 7zip and use a file version for the installation check
+  ansible.windows.win_package:
+    path: C:\temp\7z.exe
+    creates_path: C:\Program Files\7-Zip\7z.exe
+    creates_version: 16.04
+    state: present
+
+- name: Uninstall 7zip from the exe
+  ansible.windows.win_package:
+    path: C:\Program Files\7-Zip\Uninstall.exe
+    product_id: 7-Zip
+    arguments: /S
+    state: absent
+
+- name: Uninstall 7zip without specifying the path
+  ansible.windows.win_package:
+    product_id: 7-Zip
+    arguments: /S
+    state: absent
+
+- name: Install application and override expected return codes
+  ansible.windows.win_package:
+    path: https://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+    product_id: '{7DEBE4EB-6B40-3766-BB35-5CBBC385DA37}'
+    arguments: '/q /norestart'
+    state: present
+    expected_return_code: [0, 666, 3010]
+
+- name: Install a .msp patch
+  ansible.windows.win_package:
+    path: C:\Patches\Product.msp
+    state: present
+
+- name: Remove a .msp patch
+  ansible.windows.win_package:
+    product_id: '{AC76BA86-A440-FFFF-A440-0C13154E5D00}'
+    state: absent
+
+- name: Enable installation of 3rd party MSIX packages
+  ansible.windows.win_regedit:
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock
+    name: AllowAllTrustedApps
+    data: 1
+    type: dword
+    state: present
+
+- name: Install an MSIX package for the current user
+  ansible.windows.win_package:
+    path: C:\Installers\Calculator.msix  # Can be .appx, .msixbundle, or .appxbundle
+    state: present
+
+- name: Uninstall an MSIX package using the product_id
+  ansible.windows.win_package:
+    product_id: InputApp
+    state: absent
