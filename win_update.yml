@@ -57,12 +57,12 @@
       state: downloaded
       log_path: "{{logpath}}\\job-1002-{{filename}}"
 
-  - name: Job 1003 | install all updates, reboot and log it
+  - name: Job 1003 | install all updates and log it
     ansible.windows.win_updates:
       category_names: '*'
       reboot: false
       #reboot: true
-      #state: install
+      state: present
       reboot_timeout: 3600
       log_path: "{{logpath}}\\job-1003-{{filename}}"
 
