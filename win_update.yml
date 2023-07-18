@@ -62,7 +62,7 @@
       category_names: '*'
       reboot: false
       #reboot: true
-      state: present
+      state: installed
       reboot_timeout: 3600
       log_path: "{{logpath}}\\job-1003-{{filename}}"
 
