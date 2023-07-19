@@ -8,7 +8,6 @@
   become: True
   
   vars:
-
     # Become Pass
     ansible_become_pass: '{{ dev2771_become_pass }}'
 
