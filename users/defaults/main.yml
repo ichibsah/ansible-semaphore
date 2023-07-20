@@ -1,0 +1,16 @@
+---
+# defaults file for users
+cinfo = {
+        "cName": "",
+        "cSlogan": "",
+        "cInH": "",
+        "cAddr": "",
+        "cPLZ": "",
+        "cCity": "",
+        "cState": "",
+        "cTel": ""
+  }
+
+
+
+{{cinfo.cTel}}

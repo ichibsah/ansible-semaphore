@@ -1,0 +1,78 @@
+---
+# https://clarusway.com/creating-adding-authorizing-users-and-groups-with-ansible/
+# tasks file for users
+- name: creating users and groups and ssh connection
+  hosts: "*" #all is possible
+  become: yes
+  tasks:
+   - user:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - name1
+      - name2
+      - name3
+      - name4     
+   - group:
+      name: "{{ item }}"
+      state: present
+     loop:
+      - group1
+      - group2
+
+   - ansible.builtin.user:
+      name: name1
+      shell: /bin/bash
+      groups: group1,group2
+      append: yes
+      
+   - ansible.builtin.user:
+      name: name2
+      shell: /bin/bash
+      groups: group2
+      append: yes
+
+   - authorized_key:
+       user: name1
+       state: present
+       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+
+   - authorized_key:
+       user: name2
+       state: present
+       key: "{{ lookup('file', './user_id_rsa.pub') }}"
+       
+// if you need the same process for other users, you can add this script to the main block
+   # - authorized_key:
+   #     user: name3
+   #     state: present
+   #     key: "{{ lookup('file', './user_id_rsa.pub') }}"
+
+
+
+#https://opensource.com/article/23/2/automate-openstack-ansible
+  vars:
+    flavors:
+      - name: "small"
+        ram: 4096
+        vcpus: 1
+      - name: "medium"
+        ram: 8096
+        vcpus: 2
+      - name: "large"
+        ram: 16384
+        vcpus: 4
+      - name: "xlarge"
+        ram: 32768
+        vcpus: 8
+
+  tasks:
+  - name: create flavors
+    openstack.cloud.compute_flavor:
+      state: present
+      name: "{{ item.name }}"
+      ram: "{{ item.ram }}"
+      vcpus: "{{ item.vcpus }}"
+      disk: 0
+    loop: 
+      - flavors
