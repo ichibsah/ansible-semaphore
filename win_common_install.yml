@@ -79,6 +79,11 @@
       name: winlogbeat
       state: present
 
+  - name: Job-id 1105 | Install notepadplusplus
+    win_chocolatey:
+      name: notepadplusplus.install
+      state: present
+
       
       #source: https://community.chocolatey.org/api/v2/      
       #log_path: "{{logpath}}\\job-1101-{{filename}}"
