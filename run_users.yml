@@ -27,7 +27,7 @@
     repo_url: https://github.com/ichibsah/ansible-semaphore.git
 
     users:
-      - name: root
+      - "name": "root"
         shell: /bin/bash
         groups: root, sudo
         append: yes
