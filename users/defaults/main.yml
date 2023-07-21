@@ -1,6 +1,6 @@
 ---
 # defaults file for users
-vars:
+
   users:
     - name: root
       shell: /bin/bash
