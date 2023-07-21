@@ -3,17 +3,19 @@
 # tasks file for users
 
 - name: creating users and groups and ssh connection
-  ansible.builtin.user:
+  user:
     name: "{{item.name}}"
+    update_password: always
     shell: "{{item.shell}}"
-    groups: "{{item.group}}"
+    groups: "{{item.groups}}"
+    #password: "{{ localhost_become_pass | password_hash('sha512') }}"
     append: "{{item.append}}"
-  loop:
-    - users
+    create_home: True
+    state: present
+  loop: "{{ users }}"
 
 - authorized_key:
     user: "{{item.name}}"
     state: "{{item.state}}"
-    key: "{{ lookup('file', './file/{{item.key}}') }}"
-  loop:
-    - users
+    key: "{{ lookup('file', 'files/{{item.key}}') }}"
+  loop: "{{ users }}"
