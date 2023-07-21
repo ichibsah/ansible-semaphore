@@ -26,21 +26,21 @@
     #repo_url: git://github.com/sfromm/ansible-playbooks.git
     repo_url: https://github.com/ichibsah/ansible-semaphore.git
 
-    users:
-      - "name": "root"
-        shell: /bin/bash
-        groups: root, sudo
-        append: yes
-        state: present
-        key: root.pub
-        hosts: all
-      - name: deploy
-        shell: /bin/bash
-        groups: deploy
-        append: yes
-        state: present
-        key: deploy.pub
-        hosts: dev
+    # users:
+    #   - "name": "root"
+    #     shell: /bin/bash
+    #     groups: root, sudo
+    #     append: yes
+    #     state: present
+    #     key: root.pub
+    #     hosts: all
+    #   - name: deploy
+    #     shell: /bin/bash
+    #     groups: deploy
+    #     append: yes
+    #     state: present
+    #     key: deploy.pub
+    #     hosts: dev
 
   roles:
     - users
