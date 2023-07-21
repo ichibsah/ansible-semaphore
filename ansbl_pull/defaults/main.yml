@@ -18,3 +18,19 @@
     # repo must contain a local.yml file at top level
     #repo_url: git://github.com/sfromm/ansible-playbooks.git
     repo_url: git://github.com/ichibsah/ansible-semaphore.git
+
+    users:  [{
+      user: root,
+      job: "ansible-pull -d {{ workdir }} -U {{ repo_url }} >>{{ logfile }} 2>&1",
+      state: present,
+      backup: False,
+      minute: "*/2", # Minute when the job should run ( 0-59, *, */2, etc )
+      hour: "*", # Hour when the job should run ( 0-23, *, */2, etc )
+      day: "*", # Day of the month the job should run ( 1-31, *, */2, etc )
+      month: "*", # Month of the year the job should run ( 1-12, *, */2, etc )
+      weekday: "*", # Day of the week that the job should run ( 0-6 for Sunday-Saturday, *, etc )
+      disabled: True,
+    }],
+    [{}]
+    
+    

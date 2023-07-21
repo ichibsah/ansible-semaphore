@@ -1,16 +1,18 @@
 ---
 # defaults file for users
-cinfo = {
-        "cName": "",
-        "cSlogan": "",
-        "cInH": "",
-        "cAddr": "",
-        "cPLZ": "",
-        "cCity": "",
-        "cState": "",
-        "cTel": ""
-  }
-
-
-
-{{cinfo.cTel}}
+vars:
+  users:
+    - name: root
+      shell: /bin/bash
+      groups: root, sudo
+      append: yes
+      state: present
+      key: root.pub
+      hosts: all
+    - name: deploy
+      shell: /bin/bash
+      groups: deploy
+      append: yes
+      state: present
+      key: deploy.pub
+      hosts: dev

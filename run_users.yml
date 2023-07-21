@@ -1,0 +1,46 @@
+---
+
+- name: 'Ansible Users'
+  hosts: localhost
+  connection: local
+  #remote_user: root
+  become_user: root
+  become: True
+  
+  vars:
+    # Become Pass
+    ansible_become_pass: '{{ dev2771_become_pass }}'
+
+    # schedule is fed directly to cron
+    schedule: '*/1 * * * *'
+
+    # User to run ansible-pull as from cron
+    cron_user: root
+
+    # File that ansible will use for logs
+    logfile: /var/log/ansible-pull.log
+
+    # Directory to where repository will be cloned
+    workdir: /var/lib/ansible/local
+
+    #repo_url: git://github.com/sfromm/ansible-playbooks.git
+    repo_url: https://github.com/ichibsah/ansible-semaphore.git
+
+    users:
+      - name: root
+        shell: /bin/bash
+        groups: root, sudo
+        append: yes
+        state: present
+        key: root.pub
+        hosts: all
+      - name: deploy
+        shell: /bin/bash
+        groups: deploy
+        append: yes
+        state: present
+        key: deploy.pub
+        hosts: dev
+
+  roles:
+    - users
