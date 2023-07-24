@@ -1,6 +1,7 @@
 ---
 # https://clarusway.com/creating-adding-authorizing-users-and-groups-with-ansible/
 # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html
+# https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_module.html
 # tasks file for users
 
 - name: creating users and groups and ssh connection
