@@ -13,7 +13,9 @@
   ignore_unreachable: true
   #become_method: runas 
   #become_user: adminqit
-  
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/index.html#plugins-in-ansible-windows  
+# https://docs.ansible.com/ansible/latest/collections/index.html#list-of-collections
 
   vars:
     #*ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
@@ -36,12 +38,18 @@
     logpath: C:\ansible-log
     filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
 
-
   tasks: 
   - name: Job-id 1000 | Create Ansible logs directory structure
     ansible.windows.win_file:
       path: "{{logpath}}"
       state: directory
+
+  - name: Set format, location and unicode to English Australia and copy settings, reboot if required
+    community.windows.win_region:
+      location: 1031
+      format: de-DE
+      unicode_language: de-DE
+    register: result
 
   - name: Job 998 | Set timezone to 'Central European Time' (GMT +01:00)
     community.windows.win_timezone:
@@ -75,6 +83,10 @@
       state: installed
       reboot_timeout: 3600
       log_path: "{{logpath}}\\job-1003-{{filename}}"
+    register: result
+
+  - ansible.windows.win_reboot:
+    when: result.restart_required      
 
   # - name: Run a command under a non-Powershell interpreter (cmd in this case)
   #   ansible.windows.win_shell: echo %HOMEDIR%

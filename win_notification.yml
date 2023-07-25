@@ -1,0 +1,174 @@
+---
+
+- name: 'QIT Automation 1.0'
+  hosts: all
+  #connection: local
+  #remote_user: adminqit
+  #remote_user: adminqit
+  #ansible_user: adminqit #ERROR! 'ansible_user' is not a valid attribute for a Play
+  #become: true
+  #gathering: smart #ERROR! 'gathering' is not a valid attribute for a Play
+  gather_facts: True
+  ignore_errors: True
+  ignore_unreachable: true
+  #become_method: runas 
+  #become_user: adminqit
+  
+
+  vars:
+    #+ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
+    #+ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
+    #ansible_shell_type: powershell #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    #shell_type: powershell #ERROR! 'shell_type' is not a valid attribute for a Play
+    #remote_tmp: C:\Tmp
+    #ansible_remote_tmp: c\temp
+    #remote_tmp: c\temp
+    #ansible_ssh_password: adminqit
+    #ansible_become_pass: '{{ jenkins_become_pass }}'
+    #ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      # ansible_user: ansible
+      # ansible_password: "{{ password }}"
+      # ansible_connection: winrm
+      # ansible_winrm_transport: ntlm
+      # ansible_winrm_server_cert_validation: ignore
+    logpath: C:\ansible-log
+    filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
+
+# Note
+# https://docs.ansible.com/ansible/latest/collections/community/general/index.html#plugins-in-community-general
+# https://docs.ansible.com/ansible/latest/collections/community/general/slack_module.html#ansible-collections-community-general-slack-module
+# https://docs.ansible.com/ansible/latest/collections/community/general/telegram_module.html#ansible-collections-community-general-telegram-module
+
+
+  tasks:
+- name: Send notification message via Slack
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: '{{ inventory_hostname }} completed'
+  delegate_to: localhost
+
+- name: Send notification message via Slack all options
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: '{{ inventory_hostname }} completed'
+    channel: '#ansible'
+    thread_id: '1539917263.000100'
+    username: 'Ansible on {{ inventory_hostname }}'
+    icon_url: http://www.example.com/some-image-file.png
+    link_names: 0
+    parse: 'none'
+  delegate_to: localhost
+
+- name: Insert a color bar in front of the message for visibility purposes and use the default webhook icon and name configured in Slack
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: '{{ inventory_hostname }} is alive!'
+    color: good
+    username: ''
+    icon_url: ''
+
+- name: Insert a color bar in front of the message with valid hex color value
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: 'This message uses color in hex value'
+    color: '#00aacc'
+    username: ''
+    icon_url: ''
+
+- name: Use the attachments API
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    attachments:
+      - text: Display my system load on host A and B
+        color: '#ff00dd'
+        title: System load
+        fields:
+          - title: System A
+            value: "load average: 0,74, 0,66, 0,63"
+            short: true
+          - title: System B
+            value: 'load average: 5,16, 4,64, 2,43'
+            short: true
+
+- name: Use the blocks API
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    blocks:
+      - type: section
+        text:
+          type: mrkdwn
+          text: |-
+            *System load*
+            Display my system load on host A and B
+      - type: context
+        elements:
+        - type: mrkdwn
+          text: |-
+            *System A*
+            load average: 0,74, 0,66, 0,63
+        - type: mrkdwn
+          text: |-
+            *System B*
+            load average: 5,16, 4,64, 2,43
+
+- name: Send a message with a link using Slack markup
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: We sent this message using <https://www.ansible.com|Ansible>!
+
+- name: Send a message with angle brackets and ampersands
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    msg: This message has &lt;brackets&gt; &amp; ampersands in plain text.
+
+- name: Initial Threaded Slack message
+  community.general.slack:
+    channel: '#ansible'
+    token: xoxb-1234-56789abcdefghijklmnop
+    msg: 'Starting a thread with my initial post.'
+  register: slack_response
+- name: Add more info to thread
+  community.general.slack:
+    channel: '#ansible'
+    token: xoxb-1234-56789abcdefghijklmnop
+    thread_id: "{{ slack_response['ts'] }}"
+    color: good
+    msg: 'And this is my threaded response!'
+
+- name: Send a message to be edited later on
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    channel: '#ansible'
+    msg: Deploying something...
+  register: slack_response
+- name: Edit message
+  community.general.slack:
+    token: thetoken/generatedby/slack
+    # The 'channel' option does not accept the channel name. It must use the 'channel_id',
+    # which can be retrieved for example from 'slack_response' from the previous task.
+    channel: "{{ slack_response.channel }}"
+    msg: Deployment complete!
+    message_id: "{{ slack_response.ts }}
+
+# telegram
+
+- name: Send notify to Telegram
+  community.general.telegram:
+    token: '9999999:XXXXXXXXXXXXXXXXXXXXXXX'
+    api_args:
+      chat_id: 000000
+      parse_mode: "markdown"
+      text: "Your precious application has been deployed: https://example.com"
+      disable_web_page_preview: true
+      disable_notification: true
+
+- name: Forward message to someone
+  community.general.telegram:
+    token: '9999999:XXXXXXXXXXXXXXXXXXXXXXX'
+    api_method: forwardMessage
+    api_args:
+      chat_id: 000000
+      from_chat_id: 111111
+      disable_notification: true
+      message_id: '{{ saved_msg_id }}'

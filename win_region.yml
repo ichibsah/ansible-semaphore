@@ -37,6 +37,10 @@
 
 # Note
 # ansible-galaxy collection install community.windows --force
+# use this in powershell to get the current code
+# wmic os get locale
+# Get-Culture
+# Get-UICulture
 
   tasks:
   - name: Job-id 1100 | Create Ansible logs directory structure
@@ -44,59 +48,35 @@
       path: "{{logpath}}"
       state: directory
       
-  - name: Enable Community Repo
-    win_chocolatey_source:
-      name: chocolatey
-      state: present
+- name: Set the region format to English United States
+  community.windows.win_region:
+    format: en-US
 
-  - name: Set the cache location
-    win_chocolatey_config:
-      name: cacheLocation
-      state: present
-      value: C:\Temp
+- name: Set the region format to English Australia and copy settings to new profiles
+  community.windows.win_region:
+    format: en-AU
+    copy_settings: yes
 
-  - name: Ensure Chocolatey installed from internal repo
-    win_chocolatey:
-      name: chocolatey
-      state: present
-      #source: https://community.chocolatey.org/api/v2/ChocolateyInstall.ps1
+- name: Set the location to United States
+  community.windows.win_region:
+    location: 244
 
-  - name: Stop Chocolatey on the first package failure
-    win_chocolatey_feature:
-      name: stopOnFirstPackageFailure
-      state: enabled
+# Reboot when region settings change
+- name: Set the unicode language to English Great Britain, reboot if required
+  community.windows.win_region:
+    unicode_language: en-GB
+  register: result
 
-  - name: Job-id 1101 | Install adobereader latest version
-    win_chocolatey:
-      name: adobereader
-      state: latest
+- ansible.windows.win_reboot:
+  when: result.restart_required
 
-  - name: Job-id 1102 | Install microsoft-teams latest version
-    win_chocolatey:
-      name: microsoft-teams.install
-      state: latest
+# Reboot when format, location or unicode has changed
+- name: Set format, location and unicode to English Australia and copy settings, reboot if required
+  community.windows.win_region:
+    location: 12
+    format: en-AU
+    unicode_language: en-AU
+  register: result
 
-  - name: Job-id 1103 | Install teamviewer.host latest version
-    win_chocolatey:
-      name: teamviewer.host
-      state: latest
-
-  - name: Job-id 1104 | Install Winlogbeat
-    win_chocolatey:
-      name: winlogbeat
-      state: present
-
-  - name: Job-id 1105 | Install notepadplusplus
-    win_chocolatey:
-      name: notepadplusplus.install
-      state: present
-
-      
-      #source: https://community.chocolatey.org/api/v2/      
-      #log_path: "{{logpath}}\\job-1101-{{filename}}"
-
-  # - name: Job-id 1101 |Install Notepad++ latest version
-  #   win_chocolatey:
-  #     name: notepadplusplus
-  #     state: latest
-  #     #log_path: "{{logpath}}\\job-1101-{{filename}}"
+- ansible.windows.win_reboot:
+  when: result.restart_required

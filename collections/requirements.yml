@@ -5,3 +5,6 @@ collections:
 #- name: ansible.utils
 
 #https://www.liquidweb.com/kb/how-to-install-chocolatey-on-windows/
+
+# https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html#using-collections-in-roles
+

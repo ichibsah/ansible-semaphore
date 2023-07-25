@@ -1,0 +1,241 @@
+---
+
+- name: 'QIT Automation 1.0'
+  hosts: all
+  #connection: local
+  #remote_user: adminqit
+  #remote_user: adminqit
+  #ansible_user: adminqit #ERROR! 'ansible_user' is not a valid attribute for a Play
+  #become: true
+  #gathering: smart #ERROR! 'gathering' is not a valid attribute for a Play
+  gather_facts: True
+  ignore_errors: True
+  ignore_unreachable: true
+  #become_method: runas 
+  #become_user: adminqit
+  
+
+  vars:
+    #+ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
+    #+ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
+    #ansible_shell_type: powershell #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    #shell_type: powershell #ERROR! 'shell_type' is not a valid attribute for a Play
+    #remote_tmp: C:\Tmp
+    #ansible_remote_tmp: c\temp
+    #remote_tmp: c\temp
+    #ansible_ssh_password: adminqit
+    #ansible_become_pass: '{{ jenkins_become_pass }}'
+    #ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      # ansible_user: ansible
+      # ansible_password: "{{ password }}"
+      # ansible_connection: winrm
+      # ansible_winrm_transport: ntlm
+      # ansible_winrm_server_cert_validation: ignore
+    logpath: C:\ansible-log
+    filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
+
+# Note
+# https://docs.ansible.com/ansible/latest/collections/chocolatey/chocolatey/win_chocolatey_facts_module.html#ansible-collections-chocolatey-chocolatey-win-chocolatey-facts-module
+
+  tasks:
+- name: Gather facts from chocolatey
+  win_chocolatey_facts:
+
+- name: Displays the Configuration
+  debug:
+    var: ansible_chocolatey.config
+
+- name: Displays the Feature
+  debug:
+    var: ansible_chocolatey.feature
+
+- name: Displays the Sources
+  debug:
+    var: ansible_chocolatey.sources
+
+- name: Displays the Packages
+  debug:
+    var: ansible_chocolatey.packages
+
+- name: Displays the Outdated packages
+  debug:
+    var: ansible_chocolatey.outdated
+
+- name: Gather all facts from chocolatey, except outdated packages
+  win_chocolatey_facts:
+    filter:
+    - 'config'
+    - 'feature'
+    - 'packages'
+    - 'sources'
+
+- name: Displays the collected facts from chocolatey without the outdated packages
+  debug:
+    var: ansible_chocolatey
+
+- name: Clear existing facts from chocolatey
+  ansible.builtin.meta: clear_facts
+
+- name: Gather config and feature facts only from chocolatey
+  win_chocolatey_facts:
+    filter:
+    - 'config'
+    - 'feature'
+
+- name: Displays the collected config and feature facts from chocolatey
+  debug:
+    var: ansible_chocolatey
+
+
+# https://docs.ansible.com/ansible/latest/collections/chocolatey/chocolatey/win_chocolatey_module.html#ansible-collections-chocolatey-chocolatey-win-chocolatey-module
+
+- name: Install git
+  win_chocolatey:
+    name: git
+    state: present
+
+- name: Upgrade installed packages
+  win_chocolatey:
+    name: all
+    state: latest
+
+- name: Install notepadplusplus version 6.6
+  win_chocolatey:
+    name: notepadplusplus
+    version: '6.6'
+
+- name: Install notepadplusplus 32 bit version
+  win_chocolatey:
+    name: notepadplusplus
+    architecture: x86
+
+- name: Install git from specified repository
+  win_chocolatey:
+    name: git
+    source: https://someserver/api/v2/
+
+- name: Install git from a pre configured source (win_chocolatey_source)
+  win_chocolatey:
+    name: git
+    source: internal_repo
+
+- name: Ensure Chocolatey itself is installed, using community repo for the bootstrap
+  win_chocolatey:
+    name: chocolatey
+
+- name: Ensure Chocolatey itself is installed, bootstrapping with a specific nupkg url
+  win_chocolatey:
+    name: chocolatey
+  environment:
+    - chocolateyDownloadUrl: "https://internal-web-server/files/chocolatey.1.1.0.nupkg"
+
+- name: Ensure Chocolatey itself is installed and use internal repo as source for bootstrap script
+  win_chocolatey:
+    name: chocolatey
+    source: http://someserver/chocolatey
+
+- name: Ensure Chocolatey itself is installed, using a specific bootstrap script
+  win_chocolatey:
+    name: chocolatey
+    bootstrap_script: https://internal-web-server/files/custom-chocolatey-install.ps1
+
+- name: Ensure Chocolatey itself is installed, using a specific bootstrap script and target nupkg
+  win_chocolatey:
+    name: chocolatey
+    bootstrap_script: https://internal-web-server/files/custom-chocolatey-install.ps1
+  environment:
+    - chocolateyDownloadUrl: "https://internal-web-server/files/chocolatey.1.1.0.nupkg"
+
+- name: Uninstall git
+  win_chocolatey:
+    name: git
+    state: absent
+
+- name: Install multiple packages
+  win_chocolatey:
+    name:
+    - procexp
+    - putty
+    - windirstat
+    state: present
+
+- name: Install multiple packages sequentially
+  win_chocolatey:
+    name: '{{ item }}'
+    state: present
+  loop:
+  - procexp
+  - putty
+  - windirstat
+
+- name: Uninstall multiple packages
+  win_chocolatey:
+    name:
+    - procexp
+    - putty
+    - windirstat
+    state: absent
+
+- name: Uninstall a package and dependencies
+  win_chocolatey:
+    name: audacity-lame
+    remove_dependencies: true
+    state: absent
+
+- name: Install curl using proxy
+  win_chocolatey:
+    name: curl
+    proxy_url: http://proxy-server:8080/
+    proxy_username: joe
+    proxy_password: p@ssw0rd
+
+- name: Install a package that requires 'become'
+  win_chocolatey:
+    name: officepro2013
+  become: true
+  become_user: Administrator
+  become_method: runas
+
+- name: install and pin Notepad++ at 7.6.3
+  win_chocolatey:
+    name: notepadplusplus
+    version: 7.6.3
+    pinned: true
+    state: present
+
+- name: remove all pins for Notepad++ on all versions
+  win_chocolatey:
+    name: notepadplusplus
+    pinned: false
+    state: present
+
+- name: install a package with options that require licensed edition
+  win_chocolatey:
+    name: foo
+    state: present
+    choco_args:
+    - --skip-download-cache
+    - --package-parameters-sensitive
+    - '/Password=SecretPassword'
+
+- name: ensure .NET Framework 4.8 requirement is satisfied for Chocolatey CLI v2.0.0+
+  block:
+  - name: install Chocolatey CLI v1.4.0
+    win_chocolatey:
+      name: 'chocolatey'
+      state: present
+      version: '1.4.0'
+
+  - name: install Microsoft .NET Framework 4.8
+    win_chocolatey:
+      name: 'netfx-4.8'
+      state: present
+
+  - name: Reboot the host to complete .NET Framework 4.8 install
+    ansible.windows.win_reboot:
+
+  - name: install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
+    win_chocolatey:
+      name: 'chocolatey'
+      state: latest

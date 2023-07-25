@@ -1,0 +1,117 @@
+---
+
+- name: 'QIT Automation 1.0'
+  hosts: all
+  #connection: local
+  #remote_user: adminqit
+  #remote_user: adminqit
+  #ansible_user: adminqit #ERROR! 'ansible_user' is not a valid attribute for a Play
+  #become: true
+  #gathering: smart #ERROR! 'gathering' is not a valid attribute for a Play
+  gather_facts: True
+  ignore_errors: True
+  ignore_unreachable: true
+  #become_method: runas 
+  #become_user: adminqit
+  
+
+  vars:
+    #+ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
+    #+ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
+    #ansible_shell_type: powershell #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    #shell_type: powershell #ERROR! 'shell_type' is not a valid attribute for a Play
+    #remote_tmp: C:\Tmp
+    #ansible_remote_tmp: c\temp
+    #remote_tmp: c\temp
+    #ansible_ssh_password: adminqit
+    #ansible_become_pass: '{{ jenkins_become_pass }}'
+    #ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      # ansible_user: ansible
+      # ansible_password: "{{ password }}"
+      # ansible_connection: winrm
+      # ansible_winrm_transport: ntlm
+      # ansible_winrm_server_cert_validation: ignore
+    logpath: C:\ansible-log
+    filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
+
+# Note
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_certificate_store_module.html#ansible-collections-ansible-windows-win-certificate-store-module
+
+  tasks:
+  - name: Import a certificate
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pem
+    state: present
+
+- name: Import pfx certificate that is password protected
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pfx
+    state: present
+    password: VeryStrongPasswordHere!
+  become: true
+  become_method: runas
+
+- name: Import pfx certificate without password and set private key as un-exportable
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pfx
+    state: present
+    key_exportable: false
+  # usually you don't set this here but it is for illustrative purposes
+  vars:
+    ansible_winrm_transport: credssp
+
+- name: Remove a certificate based on file thumbprint
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pem
+    state: absent
+
+- name: Remove a certificate based on thumbprint
+  ansible.windows.win_certificate_store:
+    thumbprint: BD7AF104CF1872BDB518D95C9534EA941665FD27
+    state: absent
+
+- name: Remove certificate based on thumbprint is CurrentUser/TrustedPublishers store
+  ansible.windows.win_certificate_store:
+    thumbprint: BD7AF104CF1872BDB518D95C9534EA941665FD27
+    state: absent
+    store_location: CurrentUser
+    store_name: TrustedPublisher
+
+- name: Export certificate as der encoded file
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.cer
+    state: exported
+    file_type: der
+
+- name: Export certificate and key as pfx encoded file
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pfx
+    state: exported
+    file_type: pkcs12
+    password: AnotherStrongPass!
+  become: true
+  become_method: runas
+  become_user: SYSTEM
+
+- name: Import certificate be used by IIS
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pfx
+    file_type: pkcs12
+    password: StrongPassword!
+    store_location: LocalMachine
+    key_storage: machine
+    state: present
+  become: true
+  become_method: runas
+  become_user: SYSTEM
+
+- name: Import certificate to be used for LDAPS
+  ansible.windows.win_certificate_store:
+    path: C:\Temp\cert.pfx
+    password: StrongPassword!
+    store_type: service
+    store_location: NTDS
+    key_exportable: false
+    key_storage: machine
+    state: present

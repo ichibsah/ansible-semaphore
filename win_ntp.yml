@@ -37,6 +37,10 @@
 
 # Note
 # ansible-galaxy collection install community.windows --force
+# use this in powershell to get the current code
+# wmic os get locale
+# Get-Culture
+# Get-UICulture
 
   tasks:
   - name: Job-id 1100 | Create Ansible logs directory structure
@@ -44,59 +48,31 @@
       path: "{{logpath}}"
       state: directory
       
-  - name: Enable Community Repo
-    win_chocolatey_source:
-      name: chocolatey
-      state: present
+- name: NTP test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
 
-  - name: Set the cache location
-    win_chocolatey_config:
-      name: cacheLocation
-      state: present
-      value: C:\Temp
+  tasks:
 
-  - name: Ensure Chocolatey installed from internal repo
-    win_chocolatey:
-      name: chocolatey
-      state: present
-      #source: https://community.chocolatey.org/api/v2/ChocolateyInstall.ps1
+  - name: "Set ntp"
+    inspur.sm.edit_ntp:
+      auto_date: "enable"
+      server2: "time.nist.gov"
+      provider: "{{ ism }}"
 
-  - name: Stop Chocolatey on the first package failure
-    win_chocolatey_feature:
-      name: stopOnFirstPackageFailure
-      state: enabled
+  - name: "Set ntp"
+    inspur.sm.edit_ntp:
+      auto_date: "disable"
+      ntp_time: "20200609083600"
+      provider: "{{ ism }}"
 
-  - name: Job-id 1101 | Install adobereader latest version
-    win_chocolatey:
-      name: adobereader
-      state: latest
-
-  - name: Job-id 1102 | Install microsoft-teams latest version
-    win_chocolatey:
-      name: microsoft-teams.install
-      state: latest
-
-  - name: Job-id 1103 | Install teamviewer.host latest version
-    win_chocolatey:
-      name: teamviewer.host
-      state: latest
-
-  - name: Job-id 1104 | Install Winlogbeat
-    win_chocolatey:
-      name: winlogbeat
-      state: present
-
-  - name: Job-id 1105 | Install notepadplusplus
-    win_chocolatey:
-      name: notepadplusplus.install
-      state: present
-
-      
-      #source: https://community.chocolatey.org/api/v2/      
-      #log_path: "{{logpath}}\\job-1101-{{filename}}"
-
-  # - name: Job-id 1101 |Install Notepad++ latest version
-  #   win_chocolatey:
-  #     name: notepadplusplus
-  #     state: latest
-  #     #log_path: "{{logpath}}\\job-1101-{{filename}}"
+  - name: "set ntp"
+    inspur.sm.edit_ntp:
+      time_zone: 8
+      provider: "{{ ism }}"
