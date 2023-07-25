@@ -17,6 +17,9 @@
 # https://docs.ansible.com/ansible/latest/collections/ansible/windows/index.html#plugins-in-ansible-windows  
 # https://docs.ansible.com/ansible/latest/collections/index.html#list-of-collections
 
+# proxmox
+# https://docs.ansible.com/ansible/latest/collections/community/general/index.html#plugins-in-community-general
+
   vars:
     #*ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
     #*ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
