@@ -15,9 +15,11 @@
     create_home: True
     state: present
   loop: "{{ users }}"
+  when: "{{item.hosts}}" is "all" or "{{item.hosts}}" is "{{ansible_hostname}}"
 
 - authorized_key:
     user: "{{item.name}}"
     state: "{{item.state}}"
-    key: "{{ lookup('file', 'files/{{item.key}}') }}"
+    key: "{{ lookup('file', 'files/authorized_key/{{item.key}}') }}"
   loop: "{{ users }}"
+  when: "{{item.hosts}}" is "all" or "{{item.hosts}}" is "{{ansible_hostname}}"

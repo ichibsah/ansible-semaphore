@@ -35,8 +35,10 @@
     logpath: C:\ansible-log
     filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
 
+# Note
+# ansible-galaxy collection install community.windows --force
 
-  tasks: 
+  tasks:
   - name: Job-id 1100 | Create Ansible logs directory structure
     ansible.windows.win_file:
       path: "{{logpath}}"

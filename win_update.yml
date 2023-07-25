@@ -43,6 +43,16 @@
       path: "{{logpath}}"
       state: directory
 
+  - name: Job 998 | Set timezone to 'Central European Time' (GMT +01:00)
+    community.windows.win_timezone:
+      timezone: W. Europe Standard Time
+      #log_path: "{{logpath}}\\job-998-{{filename}}"
+
+  # - name: Job 999 | Set timezone to Europe/Berlin
+  #   community.general.timezone:
+  #     name: Europe/Berlin
+  #     log_path: "{{logpath}}\\job-999-{{filename}}"
+
   - name: Job 1001 | searched all updates and log it
     ansible.windows.win_updates:
       category_names: '*'
