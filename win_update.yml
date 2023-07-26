@@ -47,9 +47,10 @@
       path: "{{logpath}}"
       state: directory
 
+  # https://learn.microsoft.com/en-gb/windows/win32/intl/table-of-geographical-locations
   - name: Job 997 | Set format, location and unicode to German and copy settings, reboot if required
     community.windows.win_region:
-      location: 1031
+      location: 94
       format: de-DE
       unicode_language: de-DE
     register: result
