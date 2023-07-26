@@ -42,19 +42,19 @@
     filename: "{{ lookup('pipe', 'date +%Y%m%d') }}.log"
 
   tasks: 
-  - name: Job-id 1000 | Create Ansible logs directory structure
+  - name: Job-id 0000 | Create Ansible logs directory structure
     ansible.windows.win_file:
       path: "{{logpath}}"
       state: directory
 
-  - name: Set format, location and unicode to English Australia and copy settings, reboot if required
+  - name: Job 997 | Set format, location and unicode to German and copy settings, reboot if required
     community.windows.win_region:
       location: 1031
       format: de-DE
       unicode_language: de-DE
     register: result
 
-  - name: Job 998 | Set timezone to 'Central European Time' (GMT +01:00)
+  - name: Job 998 | Set timezone to 'W. Europe Standard Time' (GMT +01:00)
     community.windows.win_timezone:
       timezone: W. Europe Standard Time
       #log_path: "{{logpath}}\\job-998-{{filename}}"
@@ -89,7 +89,7 @@
     register: result
 
   - ansible.windows.win_reboot:
-    when: result.restart_required      
+    when: result.reboot_required      
 
   # - name: Run a command under a non-Powershell interpreter (cmd in this case)
   #   ansible.windows.win_shell: echo %HOMEDIR%
