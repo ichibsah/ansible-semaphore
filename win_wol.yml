@@ -1,8 +1,9 @@
 ---
 
 - name: 'QIT Automation 1.0'
-  hosts: all
-  #connection: local
+  #hosts: all
+  hosts: localhost
+  connection: local
   #remote_user: adminqit
   #remote_user: adminqit
   #ansible_user: adminqit #ERROR! 'ansible_user' is not a valid attribute for a Play
@@ -19,7 +20,7 @@
     #+ansible_remote_user: adminqit #ERROR! 'ansible_remote_user' is not a valid attribute for a Play
     #+ansible_ssh_user: adminqit #ERROR! 'ansible_ssh_user' is not a valid attribute for a Play
     #ansible_shell_type: powershell #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
-    ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
+    #####ansible_shell_type: cmd #ERROR! 'ansible_shell_type' is not a valid attribute for a Play
     #shell_type: powershell #ERROR! 'shell_type' is not a valid attribute for a Play
     #remote_tmp: C:\Tmp
     #ansible_remote_tmp: c\temp
@@ -37,15 +38,22 @@
 
 # Note
 # https://docs.ansible.com/ansible/latest/collections/community/general/wakeonlan_module.html
+# ansible-galaxy collection install community.general
 
   tasks:
-  - name: Send a magic Wake-on-LAN packet to 00:00:5E:00:53:66
-  community.general.wakeonlan:
-    mac: '00:00:5E:00:53:66'
-    broadcast: 192.0.2.23
-  delegate_to: localhost
+  - name: Send a magic Wake-on-LAN packet port 7
+    community.general.wakeonlan:
+      #mac: '00:0C:29:55:59:68'
+      #mac: '00:0c:29:8b:df:24'
+      mac: '00:0c:29:c9:43:93' # 2498
+      broadcast: 255.255.255.255 # Default: "255.255.255.255"
+      #broadcast: 10.30.0.255
+    delegate_to: localhost
 
-- community.general.wakeonlan:
-    mac: 00:00:5E:00:53:66
-    port: 9
-  delegate_to: localhost
+  - name: Send a magic Wake-on-LAN packet port 9
+    community.general.wakeonlan:
+      #mac: 00:0C:29:55:59:68
+      #mac: 00:0c:29:8b:df:24 #2271
+      mac: 00:0c:29:c9:43:93 # 2498
+      port: 9 # Default: 7
+    delegate_to: localhost
