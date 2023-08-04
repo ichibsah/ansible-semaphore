@@ -4,6 +4,7 @@ opsi-setup --cleanup-backend
 opsi-package-manager -r qit-teams #removes unwanted packages
 opsi-package-manager -r teamviewer_full #removes unwanted packages
 opsi-package-manager -r teamviewer-host-installer
+opsi-package-manager -r qit-sonicwall_netextender
 
 https://download.uib.de/opsi4.2/documentation/opsi-manual-en.pdf pg.75
 opsi-package-updater list --help #
