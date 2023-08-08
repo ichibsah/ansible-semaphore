@@ -2,18 +2,23 @@
 opsi-backup create
 opsi-setup --cleanup-backend
 opsi-package-manager -r qit-teams #removes unwanted packages
-opsi-package-manager -r teamviewer_full #removes unwanted packages
+opsi-package-manager -r qit-teamviewer_full #removes unwanted packages
+opsi-package-manager -r qit-teamviewer #removes unwanted packages
 opsi-package-manager -r teamviewer-host-installer
 opsi-package-manager -r qit-sonicwall_netextender
+
+cp qit-teamviewer-full /var/lib/opsi/workbench/ -R
+opsi-package-manager -i /var/lib/opsi/workbench/qit-teamviewer-full/qit-teamviewer-full_15.44.4.0-1.opsi
 
 https://download.uib.de/opsi4.2/documentation/opsi-manual-en.pdf pg.75
 opsi-package-updater list --help #
 
 opsi-package-updater list --updatable-packages
+opsi-package-updater list --packages
 opsi-package-updater -v update
 opsi-package-updater -v --repo uib_windows install
 
-
+ opsi-deploy-client-agent
 
 
 /var/log/opsi/clientconnect
